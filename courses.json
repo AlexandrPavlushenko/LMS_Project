@@ -1,0 +1,20 @@
+[
+    {
+        "model": "materials.course",
+        "pk": 1,
+        "fields": {
+            "title": "Курс по Python",
+            "description": "Изучите основы Python.",
+            "preview": null
+        }
+    },
+    {
+        "model": "materials.course",
+        "pk": 2,
+        "fields": {
+            "title": "Курс по Django",
+            "description": "Создание веб-приложений с использованием Django.",
+            "preview": null
+        }
+    }
+]
