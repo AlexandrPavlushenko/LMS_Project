@@ -1,5 +1,4 @@
 from django.conf import settings
-
 from django.db import models
 
 
@@ -53,3 +52,15 @@ class Lesson(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Subscription(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name="subscriptions", on_delete=models.CASCADE
+    )
+    course = models.ForeignKey(
+        Course, related_name="subscriptions", on_delete=models.CASCADE
+    )
+
+    class Meta:
+        unique_together = ("user", "course")  # Обеспечивает уникальность подписки
