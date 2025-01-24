@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from .paginators import CustomPagination
 from rest_framework.exceptions import PermissionDenied
 
+
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
@@ -23,8 +24,13 @@ class CourseViewSet(viewsets.ModelViewSet):
         return super().get_permissions()
 
     def check_moderator_access(self):
-        if not (self.request.user.groups.filter(name="moderators").exists() or self.request.user.is_staff):
-            raise PermissionDenied("У вас недостаточно прав для доступа к этому ресурсу.")
+        if not (
+            self.request.user.groups.filter(name="moderators").exists()
+            or self.request.user.is_staff
+        ):
+            raise PermissionDenied(
+                "У вас недостаточно прав для доступа к этому ресурсу."
+            )
 
     def get_queryset(self):
 
@@ -49,8 +55,13 @@ class LessonViewSet(viewsets.ModelViewSet):
         return super().get_permissions()
 
     def check_moderator_access(self):
-        if not (self.request.user.groups.filter(name="moderators").exists() or self.request.user.is_staff):
-            raise PermissionDenied("У вас недостаточно прав для доступа к этому ресурсу.")
+        if not (
+            self.request.user.groups.filter(name="moderators").exists()
+            or self.request.user.is_staff
+        ):
+            raise PermissionDenied(
+                "У вас недостаточно прав для доступа к этому ресурсу."
+            )
 
     def get_queryset(self):
         self.check_moderator_access()
