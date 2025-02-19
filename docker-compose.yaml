@@ -1,52 +1,44 @@
+version: '3.9'
+
 services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
   web:
     build: .
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/app
     ports:
-      - "8080:8080"
-    env_file:
-      - .env
+      - "8000:8000"
     depends_on:
       - db
-      - redis
-
-  db:
-    image: postgres:17
-    env_file:
-      - ./.env
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+    env_file: .env
 
   redis:
-    image: redis:6
-    ports:
-      - "6379:6379"
+    image: redis:alpine
 
   celery:
     build: .
-    command: celery -A config worker -l INFO -P eventlet
-    volumes:
-      - .:/app
-    env_file:
-      - .env
+    command: celery -A app worker -l info -p eventlet
     depends_on:
-      - web
       - redis
+      - db
+    env_file: .env
 
   celery-beat:
     build: .
-    command: celery -A config beat -l INFO
-    volumes:
-      - .:/app
-    env_file:
-      - .env
+    command: celery -A app beat -l info
     depends_on:
-      - web
       - redis
+      - db
+    env_file: .env
 
 volumes:
   postgres_data:
