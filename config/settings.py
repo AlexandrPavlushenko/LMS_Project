@@ -1,4 +1,6 @@
 import os
+from datetime import timedelta
+
 from dotenv import load_dotenv
 from pathlib import Path
 
@@ -21,7 +23,11 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "users",
-    "materials"
+    "materials",
+    "django_filters",
+    "rest_framework_simplejwt",
+    "drf_yasg",
+    "django_celery_beat",
 ]
 
 MIDDLEWARE = [
@@ -94,3 +100,54 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+AUTH_USER_MODEL = "users.User"
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.yandex.ru"
+EMAIL_PORT = 465
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+REST_FRAMEWORK = {
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.BasicAuthentication",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+}
+
+STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://localhost:6379/1",
+    }
+}
+
+CELERY_BEAT_SCHEDULE = {
+    "task-name": {
+        "task": "materials.deactivate_inactive_users",
+        "schedule": timedelta(days=1),  # Расписание выполнения задачи
+    },
+}
+# URL-адрес брокера сообщений
+CELERY_BROKER_URL = "redis://localhost:6379/1"
+
+# URL-адрес брокера результатов
+CELERY_RESULT_BACKEND = "redis://localhost:6379"
+
+# Часовой пояс для работы Celery
+CELERY_TIMEZONE = "Europe/Moscow"
+
+# Флаг отслеживания выполнения задач
+# CELERY_TASK_TRACK_STARTED = True
+
+# Максимальное время на выполнение задачи
+# CELERY_TASK_TIME_LIMIT = 30 * 60
