@@ -27,21 +27,20 @@ services:
     image: postgres:17
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    env_file:
-      - ./.env
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
 
   redis:
     image: redis:7
     volumes:
       - redis_data:/data
-    env_file:
-      - ./.env
-
-
+    env_file: .env
 
   celery:
     build: .
-    command: celery -A app worker -l info -p eventlet
+    command: celery -A config.celery worker -l info
     depends_on:
       - redis
       - db
@@ -49,7 +48,7 @@ services:
 
   celery-beat:
     build: .
-    command: celery -A app beat -l info
+    command: celery -A config.celery beat -l info
     depends_on:
       - redis
       - db
@@ -58,4 +57,4 @@ services:
 volumes:
   postgres_data:
   static_volume:
-  redis_volume:
+  redis_data:
