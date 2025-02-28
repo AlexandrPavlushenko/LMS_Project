@@ -1,0 +1,8 @@
+__pycache__/
+.coverage
+celerybeat-schedule
+.env
+venv/
+.venv
+.idea
+migrations
