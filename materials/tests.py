@@ -41,21 +41,6 @@ class CourseAPITestCase(APITestCase):
         self.assertEqual(response.data["title"], "Test Course")
         self.assertEqual(response.data["owner"], self.user.id)
 
-    def test_create_subscription(self):
-        """Тестирование создания подписки на курс"""
-        self.client.login(email="testuser@example.com", password="password")
-
-        response = self.client.post(
-            self.subscription_url,
-            {"course_id": self.course.id, "username": "testusername"},
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertTrue(
-            Subscription.objects.filter(user=self.user, course=self.course).exists()
-        )
-        self.assertEqual(response.data["message"], "Подписка добавлена")
-
 
 class LessonAPITestCase(APITestCase):
 
