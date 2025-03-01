@@ -5,4 +5,3 @@ celerybeat-schedule
 venv/
 .venv
 .idea
-migrations
